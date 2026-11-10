@@ -1,0 +1,17 @@
+frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── ChatWindow.jsx
+│   │   ├── Message.jsx
+│   │   └── JDAnalyzer.jsx
+│   ├── services/
+│   │   └── api.js
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── .gitignore
+├── package.json
+└── vite.config.js
