@@ -20,7 +20,7 @@ const JDAnalyzer = ({ onAnalyze }) => {
     <section className="fixed bottom-0 left-0 w-full bg-slate-900/80 backdrop-blur-xl border-t border-slate-800/80 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] px-4 py-5 z-50 transition-all duration-300">
       
       {/* Background Accent Glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-indigo-500/5 to-purple-500/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 via-indigo-500/5 to-purple-500/5 pointer-events-none" />
 
       <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
         
@@ -59,7 +59,7 @@ const JDAnalyzer = ({ onAnalyze }) => {
           <button
             type="submit"
             disabled={!jobDescription.trim() || isAnalyzing}
-            className="sm:self-end h-[48px] sm:h-auto flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/35 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-cyan-500 disabled:hover:to-blue-600 disabled:shadow-none"
+            className="sm:self-end h-12 sm:h-auto flex items-center justify-center gap-2.5 rounded-xl bg-linear-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/35 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-cyan-500 disabled:hover:to-blue-600 disabled:shadow-none"
           >
             {isAnalyzing ? (
               <>

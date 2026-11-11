@@ -15,8 +15,8 @@ const Message = ({ message }) => {
         <div
           className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-xs font-semibold shadow-sm transition-transform duration-200 group-hover:scale-105 ${
             isAi
-              ? "bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/20"
-              : "bg-gradient-to-br from-slate-700 to-slate-800 text-slate-200 border border-slate-700/60 shadow-slate-900/20"
+              ? "bg-linear-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/20"
+              : "bg-linear-to-br from-slate-700 to-slate-800 text-slate-200 border border-slate-700/60 shadow-slate-900/20"
           }`}
         >
           {isAi ? (
@@ -55,7 +55,7 @@ const Message = ({ message }) => {
           className={`p-4 rounded-2xl shadow-sm transition-all duration-200 ${
             isAi
               ? "bg-slate-900/90 text-slate-100 border border-slate-800/80 rounded-tl-none shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
-              : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-tr-none shadow-[0_4px_20px_rgba(6,182,212,0.15)]"
+              : "bg-linear-to-r from-cyan-500 to-blue-600 text-white rounded-tr-none shadow-[0_4px_20px_rgba(6,182,212,0.15)]"
           }`}
         >
           <div className="flex items-center justify-between gap-4 mb-1">

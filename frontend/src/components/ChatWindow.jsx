@@ -22,7 +22,7 @@ const ChatWindow = ({ messages }) => {
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 bg-slate-50/30 dark:bg-slate-950/20">
+      <div className="p-6 space-y-6 max-h-150 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 bg-slate-50/30 dark:bg-slate-950/20">
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <Message key={message.id} message={message} />
