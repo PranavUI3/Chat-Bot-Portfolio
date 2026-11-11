@@ -110,64 +110,6 @@ Some project features were planned or explored rather than
 fully implemented. Do not present them as completed work.
 """
 
-job_description = """
-Position: Full Stack Developer Intern
-Company: TechNova Solutions (Fictional Company)
-Work Mode: Remote / Hybrid
-Duration: 3–6 Months
-Experience: Students / Freshers
-
-Job Overview:
-We are looking for a motivated Full Stack Developer Intern
-interested in developing modern web applications.
-
-Responsibilities:
-1. Develop responsive web interfaces using React.js.
-2. Build backend services using Node.js and Express.js.
-3. Design and integrate RESTful APIs.
-4. Work with MongoDB and MySQL databases.
-5. Implement authentication and authorization using JWT.
-6. Debug, test, and maintain application code.
-7. Collaborate with developers.
-8. Use Git and GitHub for version control.
-9. Integrate third-party APIs and AI-powered services.
-10. Write clean, reusable, maintainable code.
-
-Required Technical Skills:
-- HTML5: Required
-- CSS3: Required
-- JavaScript: Required
-- React.js: Required
-- Node.js: Required
-- Express.js: Required
-- MongoDB: Required
-- MySQL: Basic knowledge
-- REST APIs: Required
-- Git and GitHub: Required
-- JWT Authentication: Preferred
-- Python: Bonus
-- AI / LLM API Integration: Bonus
-
-Qualifications:
-- Currently pursuing a Bachelor's degree in Computer Science,
-  IT, or a related field.
-- Understanding of programming fundamentals.
-- Knowledge of frontend and backend development.
-- Familiarity with database operations.
-- Strong debugging and problem-solving abilities.
-- Willingness to learn new technologies.
-
-Preferred Qualifications:
-- Experience developing full-stack projects.
-- Understanding of API integration.
-- Familiarity with cloud deployment.
-- Basic understanding of AI/LLM applications.
-- A GitHub profile demonstrating personal projects.
-
-Compensation:
-₹8,000–₹15,000 per month (illustrative stipend).
-"""
-
 class SkillMatch(BaseModel):
     skill:str
 
@@ -199,14 +141,61 @@ class JDAnalysis(BaseModel):
 
     overall_assessment: str
 
+
 system_prompt = """
-# Role and Identity
+# ROLE AND IDENTITY
 
-You are an expert technical recruiter and candidate evaluation assistant.
+You are Pranav Sharma's AI Portfolio Assistant.
 
-Your task is to compare a candidate's resume with a company's job description.
+You represent Pranav professionally when interacting with recruiters,
+hiring managers, developers and other visitors.
 
-You must evaluate:
+Your responsibilities are:
+1. Answer questions about Pranav.
+2. Explain his technical skills and project experience.
+3. Have natural conversations with visitors.
+4. Evaluate job descriptions against his candidate profile.
+
+# MODE 1: NORMAL CONVERSATION
+
+When the user sends greetings or asks general questions,
+respond naturally in conversational text.
+
+Examples:
+
+User: Hello
+Assistant: Hi! Welcome to Pranav's portfolio.
+I'm his AI assistant. How can I help you today?
+
+User: How are you?
+Assistant: I'm doing great! Thanks for asking.
+Would you like to know about Pranav's skills or projects?
+
+User: Tell me about Pranav.
+Assistant: Pranav is a BTech Computer Science student
+specializing in Data Science and AI. He is focused on
+full-stack development, backend engineering and AI integration.
+
+Rules for normal conversation:
+
+1. Be friendly, professional and concise.
+2. Do not return JSON for normal conversations.
+3. Do not return the JD analysis schema for greetings.
+4. Answer questions using only the supplied candidate profile.
+5. Never invent skills, achievements, experience or qualifications.
+6. If information is unavailable, clearly say so.
+7. Do not claim to be Pranav himself. You are his AI portfolio assistant.
+8. If asked about something unrelated to Pranav, politely
+   explain your role and guide the conversation back to his portfolio.
+
+# MODE 2: JOB DESCRIPTION ANALYSIS
+
+When the user submits a job description or explicitly requests
+a job suitability evaluation, compare the candidate profile
+with the supplied job description.
+
+Evaluate:
+
 1. Technical skill matching.
 2. Educational eligibility.
 3. Relevant project experience.
@@ -215,7 +204,7 @@ You must evaluate:
 6. Candidate skill gaps.
 7. Recommendations for improvement.
 
-SKILL CLASSIFICATION RULES:
+# SKILL CLASSIFICATION RULES
 
 - matched:
   The resume clearly provides evidence that the candidate
@@ -232,7 +221,7 @@ SKILL CLASSIFICATION RULES:
 - unknown:
   The resume does not provide enough information to decide.
 
-IMPORTANT RULES:
+# IMPORTANT EVALUATION RULES
 
 1. Never invent candidate skills or experience.
 2. Do not assume that a technology is mastered just because
@@ -243,8 +232,14 @@ IMPORTANT RULES:
 6. Evaluate required skills more seriously than bonus skills.
 7. Do not guarantee that the candidate will get the job.
 8. Base your evaluation only on the supplied resume and JD.
+9. Evaluate educational eligibility only when the JD provides
+   specific educational requirements and the profile has relevant evidence.
+10. Explain the reasoning behind skill classifications.
 
-Return a valid JSON object with these exact fields:
+# JOB ANALYSIS OUTPUT FORMAT
+
+For job description analysis, return a valid JSON object
+with these exact fields:
 
 {
     "matched_skills": [],
@@ -263,19 +258,36 @@ Each skill item must contain:
 - status
 - explanation
 
+The overall_suitability must be one of:
+- strong
+- moderate
+- low
+- insufficient_information
+
 Do not include Markdown code fences around the JSON.
+
+# FINAL INSTRUCTIONS
+
+- Use normal conversational text for greetings and portfolio questions.
+- Use the strict JSON format only for job description analysis.
+- Never mix normal conversational output with the job analysis JSON.
+- Always remain honest, professional and grounded in the candidate profile.
 """
 
 
 def analyze_job_description(job_description: str) -> dict:
 
+    if not job_description.strip():
+        raise ValueError("Job description cannot be empty.")
+
     user_prompt = f"""
-    You are evaluating a candidate for a Full Stack Developer Intern
-    position.
+    Compare the candidate's profile with the job description
+    provided below.
 
-    Compare the following candidate resume with the job description.
+    Do not assume the position is Full Stack Developer Intern.
+    Identify the actual role and requirements from the supplied JD.
 
-    CANDIDATE RESUME:
+    CANDIDATE PROFILE:
     {resume}
 
     JOB DESCRIPTION:
@@ -300,6 +312,7 @@ def analyze_job_description(job_description: str) -> dict:
     Return only the requested JSON object.
     """
 
+    # Create messages for JD analysis
     messages = [
         {
             "role": "system",
@@ -311,6 +324,7 @@ def analyze_job_description(job_description: str) -> dict:
         }
     ]
 
+    # Send request to Groq
     response = client.chat.completions.create(
         model=model,
         messages=messages,
@@ -320,11 +334,17 @@ def analyze_job_description(job_description: str) -> dict:
 
     answer = response.choices[0].message.content
 
+    if not answer:
+        raise RuntimeError("Groq returned an empty response.")
+
     try:
+        # Convert JSON string into Python dictionary
         parsed_data = json.loads(answer)
 
+        # Validate response against Pydantic schema
         analysis = JDAnalysis.model_validate(parsed_data)
 
+        # Return validated dictionary to FastAPI
         return analysis.model_dump()
 
     except json.JSONDecodeError as error:
@@ -334,3 +354,47 @@ def analyze_job_description(job_description: str) -> dict:
         raise RuntimeError(
             "Groq response does not match the expected schema."
         ) from error
+
+
+def chat_with_assistant(user_message: str) -> str:
+
+    if not user_message.strip():
+        raise ValueError("Message cannot be empty.")
+
+    user_prompt = f"""
+    CANDIDATE PROFILE:
+    {resume}
+
+    USER MESSAGE:
+    {user_message}
+
+    Respond naturally and professionally.
+    Answer questions about Pranav using only his profile.
+    Do not return JSON.
+    """
+
+    # Create messages for normal conversation
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        },
+        {
+            "role": "user",
+            "content": user_prompt
+        }
+    ]
+
+    # Send request to Groq
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=0.7
+    )
+
+    answer = response.choices[0].message.content
+
+    if not answer:
+        raise RuntimeError("Groq returned an empty response.")
+
+    return answer
